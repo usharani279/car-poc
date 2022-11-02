@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+    <apikit:config name="cars-config" api="cars.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <flow name="cars-main">
+        <http:listener path="${http.path}" config-ref="cars-httpListenerConfig">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="cars-config" />
+        <error-handler ref="errorError_Handler">
+            
+        </error-handler>
+    </flow>
+    <flow name="get:\ID:cars-config">
+        <flow-ref doc:name="Flow Reference" doc:id="00655e6e-92e5-413c-9a08-cadde6c30eda" name="ID-cars-implFlow1" />
+    </flow>
+    <flow name="get:\carModel:cars-config">
+        <flow-ref doc:name="Flow Reference" doc:id="31673370-d6c5-4b1b-b6aa-ba4c6e8263cd" name="carModel-milage-cars-implFlow5" />
+    </flow>
+    <flow name="get:\cheapestCar:cars-config">
+        <flow-ref doc:name="Flow Reference" doc:id="beaa5ad5-38bf-4169-a90e-121167bfb0e5" name="2ltrEngine-cars-implFlow4" />
+    </flow>
+    <flow name="get:\fileRead:cars-config">
+        <flow-ref doc:name="Flow Reference" doc:id="120f3e53-c38c-4d74-b47a-735913c5a548" name="fileRead-cars-implFlow" />
+    </flow>
+    <flow name="get:\newCar:cars-config">
+        <flow-ref doc:name="Flow Reference" doc:id="fcff6ba1-42dc-423a-af0c-5a6ebdf9713d" name="newcars-implFlow2" />
+    </flow>
+    <flow name="get:\oil:cars-config">
+        <flow-ref doc:name="Flow Reference" doc:id="d26ed590-34a2-43c6-8b3a-75a9b76871cc" name="oil-cars-implFlow3" />
+    </flow>
+    <flow name="get:\tax:cars-config">
+        <flow-ref doc:name="Flow Reference" doc:id="3eec81fe-965e-4257-b09e-17b82015ba59" name="Tax-cars-implFlow6" />
+    </flow>
+    <flow name="get:\mpg:cars-config">
+        <flow-ref doc:name="Flow Reference" doc:id="c753921f-2b9f-464d-bd3a-c6ac6d1faf27" name="mpg-cars-implFlow8" />
+    </flow>
+    <flow name="get:\AutomaticCarprice:cars-config">
+		<flow-ref doc:name="Flow Reference" doc:id="2d1d9a20-9355-439c-8861-5eac84a3ebf6" name="AutoCarprice-cars-implFlow7"/>
+    </flow>
+    <flow name="get:\ManualCarprice:cars-config">
+		<flow-ref doc:name="Flow Reference" doc:id="bcb559d8-a52e-4a98-807d-d7fd70bdddee" name="ManualCarprice-cars-implFlow"/>
+    </flow>
+</mule>

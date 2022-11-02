@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="fileRead-cars-implFlow" doc:id="0ffe1e62-7da7-4d36-941b-442d39c4e2eb" >
+		<file:read doc:name="Read csv file" doc:id="cb962278-c995-46c5-b04b-0c404f4bb0e7" path="C:\Users\palav\OneDrive\Documents\car.csv" outputMimeType="application/csv" config-ref="File_Config"/>
+		<ee:transform doc:name="convert to json" doc:id="8717104a-0721-45f2-8cc0-6994d852fa06" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<foreach doc:name="For Each" doc:id="e5b5da4e-9bc6-4051-8ce7-9ab7ea59bb5c" >
+			<db:insert doc:name="Inserted into Database" doc:id="fad8cba3-b965-4778-8df7-4d5e2867b56e" config-ref="Database_Config">
+				<db:sql><![CDATA[insert into cars(ID,carName,price,oil,mileage,mpg,year,tax,carType,engine)
+values(:ID,:carName,:price,:oil,:mileage,:mpg,:year,:tax,:carType,:engine)]]></db:sql>
+				<db:input-parameters><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+"ID" :payload.ID,
+"carName":payload.carName,
+"price":  payload.price,
+"oil":    payload.oil,
+"mileage":payload.mileage,
+"mpg":  payload.mpg,
+ "year":payload.year,
+ "tax":   payload.tax,
+ "carType":  payload.carType,
+ "engine":payload.engine
+ }]]]></db:input-parameters>
+			</db:insert>
+			<ee:transform doc:name="finalPayload" doc:id="b704cfbe-cfe5-4af3-8489-4a8a9cb0f91b">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</foreach>
+		<logger level="INFO" doc:name="Logger" doc:id="f1839f31-eb72-4843-a858-6423b9171a22" message='#["done"]'/>
+	</flow>
+	<flow name="ID-cars-implFlow1" doc:id="27a02ce2-997d-4f4f-821e-8ce3f67e47db" >
+		<ee:transform doc:name="metaData" doc:id="19437031-900b-4856-85e4-d4b0c0a15be1" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="id" ><![CDATA[attributes.queryParams.ID]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<db:select doc:name="fetching data" doc:id="c40c3d60-e9a2-4c0b-a32a-35bdd88e784d" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from cars where ID=:ID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+"ID": vars.id
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="finalPayload" doc:id="757fd429-9b3a-44de-8005-79af52f384db" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="newcars-implFlow2" doc:id="78d3248b-bdeb-40ca-a273-e9f018cc5d00" >
+		<db:select doc:name="fetchingData" doc:id="49b43641-5944-4a81-8430-5096e49dafde" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from cars]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="mappingPayload" doc:id="a6428f28-9a08-4cb1-9cf0-e1308e8a5fff" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map{
+    "ID": $.ID,
+        "carName": $.carName,
+        "price": $.price as Number,
+        "oil": $.oil,
+        "mileage": $.mileage,
+        "mpg": $.mpg,
+        "year": $.year as Number,
+        "tax": $.tax,
+        "carType": $.carType,
+        "engine": $.engine
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="filteringYear and Price" doc:id="d1632972-6946-4100-87ae-75c731d98744" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+(payload filter($.year == max(payload.year)) orderBy (($.price) ) )[0]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="oil-cars-implFlow3" doc:id="395e1acc-c958-46a1-827e-510584f8daef">
+		<ee:transform doc:name="metaData" doc:id="2f43e485-6dbe-4206-abb0-b77ed1241232" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="type" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.carType]]></ee:set-variable>
+				<ee:set-variable variableName="name" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.carName]]></ee:set-variable>
+				<ee:set-variable variableName="oil" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.oil]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<db:select doc:name="fetchingData" doc:id="962d5f07-f73c-4f97-814d-8952398a1e3f" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from cars]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="payload" doc:id="a7a989c0-7bbf-4ab1-9196-26745c866eab" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="filteringPayload" doc:id="2bd002c6-d7c3-437b-a016-a5f6147b920d">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+
+     
+     ((payload map{
+    "carName" : $.carName,
+    "carType" : $.carType,
+    "mileage" : $.mileage,
+    "oil"   : $.oil
+} filter ($.carName == vars."name" and $.carType == vars."type"))
+orderBy ($.mileage))[-1]]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+		<choice doc:name="Choice" doc:id="5812c3e4-edcf-4854-8dd8-4d8499904bc4" >
+			<when expression='#[payload.oil contains  "diesel"]'>
+				<ee:transform doc:name="finalpayload" doc:id="df3492d2-44f8-4cd8-b038-b251cc5807c2" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="finalPayload" doc:id="36ebdb79-b355-46c5-8bdb-5ff9bacb1141">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</flow>
+	<flow name="2ltrEngine-cars-implFlow4" doc:id="f779d728-106d-4dcf-b39a-f33a71f4414d" >
+		<db:select doc:name="fetchingData" doc:id="7ad63b6e-5b3f-499e-8da3-c8ecedc1005b" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from cars]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="filteringPayload" doc:id="bfffc519-099c-45b5-bc9a-0b7cd5a57ee7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+(payload filter (($.engine == "2ltr") ))[-1 to 0] orderBy ($.price)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="12908357-db73-4eaf-a9c8-0a0b6f821ab2" message='#["successfully fetched data"]'/>
+	</flow>
+	<flow name="carModel-milage-cars-implFlow5" doc:id="2f46cf41-4175-410d-8f6f-6ec5d605fce0" >
+		<ee:transform doc:name="metaData" doc:id="a1d92bf6-2f51-47b6-8c73-132e29bb8ad4" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="type" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.carType]]></ee:set-variable>
+				<ee:set-variable variableName="name" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.carName]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<db:select doc:name="fetchingData" doc:id="fc7fae3c-e20b-45bb-9ae2-7f8b3d1ea81e" config-ref="Database_Config">
+			<db:sql><![CDATA[select * from cars]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="fitering mileage and year" doc:id="907b9448-fee0-4937-a15e-db991fb9805b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+(payload filter $.mileage >=70000 and $.year >= 2020)  groupBy    $.carName ]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="Tax-cars-implFlow6" doc:id="a7a9c2a9-3cb2-4b98-bab5-49d45898ecf6" >
+		<db:select doc:name="fetchingData" doc:id="974aa6db-0284-414c-bf23-75e96af4f76e" config-ref="Database_Config">
+			<db:sql><![CDATA[select * from cars]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="fileringTax" doc:id="3ec21080-ff0b-40db-9ccf-3584e102bdeb" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+ "Top 10 petrol cars" :((payload filter ($.tax >= "200" ) map {
+    "carName" : $.carName,
+    "carType" : $.carType,
+    "Year" : $.year,
+    "Price" : $.price,
+    "Tax" : $.tax
+}) orderBy $.Price) [0 to 9]
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="28977b77-efa7-48d0-9be1-a19947beb66d" message="#[payload]"/>
+	</flow>
+	<flow name="AutoCarprice-cars-implFlow7" doc:id="5e6e787f-9bc7-4eb5-9a30-9b50fa89d3fb" >
+		<db:select doc:name="fetchingData" doc:id="38e29c3d-417b-422c-9684-58ad89f8812f" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from cars ]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="filering carType and carName" doc:id="a8d6f0fb-94c4-4e20-95e8-5e11caf89654">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+(payload filter ($.carType == "auto" and ($.carName == "BMW"  and ($.price >= "80000" or $.price <= "100000")))) orderBy (($.price )) [0 to 2]]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+		<ee:transform doc:name="finalPayload" doc:id="35c4ba1f-09e7-4544-8a80-d62190a11906">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="ManualCarprice-cars-implFlow" doc:id="35258b10-5502-49e5-b573-3f9064adc8d4" >
+		<db:select doc:name="fetchingData" doc:id="57029e25-8860-499e-b5f7-c1ae0f0b1610" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from cars ]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="filering carType and price" doc:id="48c9362d-583f-429d-a6db-21a2a259ad5f">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+(payload filter $.carType == "manual"  and $.price == max(payload.price) map {
+    "carName" : $.carName,
+    "carType" : $.carType,
+    "Year" : $.year,
+    "Price" : $.price})]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+		<ee:transform doc:name="finalPayload" doc:id="4edd7482-8d88-41f9-9558-447c0937e744" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="mpg-cars-implFlow8" doc:id="80c9429f-c4aa-40b5-adec-1f1524bab82e" >
+		<db:select doc:name="fetchingData" doc:id="92aa5b29-d398-45f9-b9c8-8fbcf03e2886" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from cars]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="fileringPayload" doc:id="c4980e2a-e44d-4af8-937e-ecb7847a060e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+(payload filter ($.carType == "semi-auto" and $.carName == "Audi" and $.mpg >= "60.0")) ]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="finalPayload" doc:id="3cd2e025-5ef6-4ca6-b826-ae5c6c1ba357">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

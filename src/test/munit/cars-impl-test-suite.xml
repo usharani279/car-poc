@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="cars-impl-test-suite.xml" />
+	<munit:test name="cars-impl-test-suite-fileRead-cars-implFlowTest" doc:id="0a09ec8d-30e6-427e-8b2f-e8bbe59ebddb" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="97a533d6-066d-4a41-8bc1-c28949133cd9" processor="file:read">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Read csv file" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="cb962278-c995-46c5-b04b-0c404f4bb0e7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://data/testdata.json','application/json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="6d79f848-d92d-476f-b3dc-398334fa8fa4" processor="db:insert">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Inserted into Database" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="fad8cba3-b965-4778-8df7-4d5e2867b56e" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://data/testdata.json','application/json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to fileRead-cars-implFlow" doc:id="926653a9-3c62-4934-bafb-025f7a9c68d9" name="get:\fileRead:cars-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="485e710c-bc89-496c-957b-33435aefa76a" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="cars-impl-test-suite-ID-cars-implFlow1Test" doc:id="541fa898-2978-4b64-9c71-ec7b2ae9f45d" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="0cb39cbd-57bd-40cf-81a2-111dd4dd7911" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fetching data" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="c40c3d60-e9a2-4c0b-a32a-35bdd88e784d" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to ID-cars-implFlow1" doc:id="e4467949-d90c-4995-b3f3-d481fcb86c73" name="get:\ID:cars-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="7c49abb0-afe2-4826-8227-41eb9e1aa6ca" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="cars-impl-test-suite-newcars-implFlow2Test" doc:id="c99669a2-62dc-4d93-bffd-73d4629c0dc6" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="0618ab7b-7c88-436a-98e5-f15a8c9b0e54" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fetchingData" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="49b43641-5944-4a81-8430-5096e49dafde" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://data/testdata.json','application/json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to newcars-implFlow2" doc:id="04a876c5-812c-4ac4-b4c6-84b795d379c1" name="get:\newCar:cars-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="33a98c1f-6469-4a07-a5e1-3096be653017" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="cars-impl-test-suite-oil-cars-implFlow3Test" doc:id="ae3b3f0a-d254-45fe-8754-ec7e05730f8f" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="dc51965e-7b05-456f-8126-4a3ec728dd8f" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fetchingData" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="962d5f07-f73c-4f97-814d-8952398a1e3f" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://data/testdata.json','application/json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to oil-cars-implFlow3" doc:id="c9850398-3225-4ce9-92da-d5586320c8ca" name="get:\oil:cars-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="c8478fa8-70ff-44b4-ab87-e7725121b970" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="cars-impl-test-suite-2ltrEngine-cars-implFlow4Test" doc:id="cfba97e5-e7b4-478d-b30e-f56eb7fff386" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="bc1a48b7-b2d2-409e-a2f8-b0508ea2b2da" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fetchingData" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="7ad63b6e-5b3f-499e-8da3-c8ecedc1005b" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://data/testdata.json','application/json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to 2ltrEngine-cars-implFlow4" doc:id="0a9190c6-21bc-4a27-86ed-25f6e42d8cdc" name="2ltrEngine-cars-implFlow4"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="1e53c374-1a01-4406-b109-786472274cef" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="cars-impl-test-suite-carModel-milage-cars-implFlow5Test" doc:id="c73bb90a-b0bd-46ae-ae89-385b0f77f485" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="54c7e977-7dba-4ade-aa4f-64336ced7ebe" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fetchingData" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="fc7fae3c-e20b-45bb-9ae2-7f8b3d1ea81e" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://data/testdata.json','application/json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to carModel-milage-cars-implFlow5" doc:id="5a4734ed-1998-430a-97a9-31e17ee32372" name="get:\carModel:cars-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="e4c147de-9430-44ca-aef9-7175f52d2342" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="cars-impl-test-suite-Tax-cars-implFlow6Test" doc:id="6576e4be-51b2-4f18-bf97-e026a5f3ba55" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="6e46ed30-8e3f-48a2-bc53-20be9dcfae19" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fetchingData" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="974aa6db-0284-414c-bf23-75e96af4f76e" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://data/testdata.json','application/json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to Tax-cars-implFlow6" doc:id="2e324f80-ce2c-49b0-a5cf-8c0c99a2a568" name="get:\tax:cars-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="2a0b91fd-217e-4058-8ddf-5dee7edba8bd" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="cars-impl-test-suite-AutoCarprice-cars-implFlow7Test" doc:id="358abe51-f82f-4d5f-82bc-977a39f9f7eb" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="455b34db-6c8e-460a-9295-99dbfcfc3c36" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fetchingData" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="38e29c3d-417b-422c-9684-58ad89f8812f" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://data/testdata.json','application/json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to AutoCarprice-cars-implFlow7" doc:id="6a67b568-a6c5-490d-98cb-57155e249236" name="get:\AutomaticCarprice:cars-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="dae62d82-8845-47ba-87c5-604733ffb19d" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="cars-impl-test-suite-ManualCarprice-cars-implFlowTest" doc:id="0b5962b3-4c17-4e2b-8848-6b113a25b4c5" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="f13b5d8c-4805-4198-b109-ac582f38ee5f" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fetchingData" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="57029e25-8860-499e-b5f7-c1ae0f0b1610" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://data/testdata.json','application/json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to ManualCarprice-cars-implFlow" doc:id="a4b4b16a-5034-4bad-8cf6-a0cdf1efdb5a" name="get:\ManualCarprice:cars-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="4ea32368-5875-4a95-9670-04fbd007deac" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="cars-impl-test-suite-mpg-cars-implFlow8Test" doc:id="904936c9-e515-4b6e-bbfa-f9844ee7fca2" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="822a5e23-cdb1-48b2-9198-2c96ad6d824c" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fetchingData" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="92aa5b29-d398-45f9-b9c8-8fbcf03e2886" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://data/testdata.json','application/json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to mpg-cars-implFlow8" doc:id="59c42c25-bb2b-4e72-af96-464299fe1568" name="mpg-cars-implFlow8"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="03517cd4-d8c4-4b90-964c-7855d92cfef9" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+  <munit:test name="cars-impl-test-suite-mpg-cars-implFlow8TestAPIKIT:BAD_REQUEST" doc:id="784095c8-42c1-46f1-bc4c-143bc47908f8" description="Test" expectedErrorType="APIKIT:BAD_REQUEST">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="db8e40fb-a143-4a37-9b84-eaf89f659877" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fetchingData" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="92aa5b29-d398-45f9-b9c8-8fbcf03e2886" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://data/testdata.json','application/json')]" mediaType="application/json" />
+					<munit-tools:error typeId="APIKIT:BAD_REQUEST" />
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to mpg-cars-implFlow8" doc:id="970d3fca-1fda-4efa-bef6-16e584a02687" name="mpg-cars-implFlow8"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="ec61bb41-0ad6-4fe3-a9b4-9667c684a9b6" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="cars-impl-test-suite-mpg-cars-implFlow8TestAPIKIT:NOT_FOUND" doc:id="1b1db09e-b256-413a-87c3-0da7f6fbf15a" description="Test" expectedErrorType="APIKIT:NOT_FOUND">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="42de6dc8-93b6-490e-abe4-4f68a50e756c" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fetchingData" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="92aa5b29-d398-45f9-b9c8-8fbcf03e2886" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://data/testdata.json','application/json')]" mediaType="application/json" />
+					<munit-tools:error typeId="APIKIT:NOT_FOUND" />
+				</munit-tools:then-return>
+			
+
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to mpg-cars-implFlow8" doc:id="f3b11fbf-cac7-40e1-ae62-8ed3ff8f7af0" name="mpg-cars-implFlow8"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="5704f6f0-a716-417e-b5b3-13489789e238" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="cars-impl-test-suite-mpg-cars-implFlow8TestAPIKIT:METHOD_NOT_ALLOWED" doc:id="055f9186-3220-4e1d-8d40-5ffa5acc69a4" description="Test" expectedErrorType="APIKIT:METHOD_NOT_ALLOWED">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="e87a348f-8c3e-4c5e-9900-a71c981de49a" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fetchingData" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="92aa5b29-d398-45f9-b9c8-8fbcf03e2886" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://data/testdata.json','application/json')]" mediaType="application/json" />
+					<munit-tools:error typeId="APIKIT:METHOD_NOT_ALLOWED" />
+				</munit-tools:then-return>
+			
+
+
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to mpg-cars-implFlow8" doc:id="959864c8-db9b-4002-9fbc-2f19c33d555f" name="mpg-cars-implFlow8"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="a7d5a203-a632-4667-b57a-0fb14bcf7ec2" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="cars-impl-test-suite-mpg-cars-implFlow8TestAPIKIT:NOT_ACCEPTABLE" doc:id="e41e62ed-946c-4a82-981d-bc9ffe866552" description="Test" expectedErrorType="APIKIT:NOT_ACCEPTABLE">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="b7397be3-f38e-4224-92d4-cda0db752520" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fetchingData" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="92aa5b29-d398-45f9-b9c8-8fbcf03e2886" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://data/testdata.json','application/json')]" mediaType="application/json" />
+					<munit-tools:error typeId="APIKIT:NOT_ACCEPTABLE" />
+				</munit-tools:then-return>
+			
+
+
+
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to mpg-cars-implFlow8" doc:id="f191758b-57f4-49c3-9cdc-82fc901f3b7c" name="mpg-cars-implFlow8"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="94ef0188-8c50-4037-8650-b9f82133f6bf" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="cars-impl-test-suite-mpg-cars-implFlow8TestAPIKIT:UNSUPPORTED_MEDIA_TYPE" doc:id="b85d6a0f-a562-48c9-ada0-935b9b403768" description="Test" expectedErrorType="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="7bbd8ecf-789d-407c-ab8e-e690a2a60361" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fetchingData" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="92aa5b29-d398-45f9-b9c8-8fbcf03e2886" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://data/testdata.json','application/json')]" mediaType="application/json" />
+					<munit-tools:error typeId="APIKIT:UNSUPPORTED_MEDIA_TYPE" />
+				</munit-tools:then-return>
+			
+
+
+
+
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to mpg-cars-implFlow8" doc:id="374dc5f5-6dcc-4674-9df0-b91fd2f904aa" name="mpg-cars-implFlow8"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="d778b26c-79b4-4470-a97d-fa2079cb1eeb" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="cars-impl-test-suite-mpg-cars-implFlow8TestAPIKIT:NOT_IMPLEMENTED" doc:id="155ab212-3c60-455d-a80c-ad6bfc480f2f" description="Test" expectedErrorType="APIKIT:NOT_IMPLEMENTED">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="ab809315-6f47-4bbd-8d67-372782fdda95" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fetchingData" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="92aa5b29-d398-45f9-b9c8-8fbcf03e2886" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://data/testdata.json','application/json')]" mediaType="application/json" />
+					<munit-tools:error typeId="APIKIT:NOT_IMPLEMENTED" />
+				</munit-tools:then-return>
+			
+
+
+
+
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to mpg-cars-implFlow8" doc:id="a2fee851-de35-4a82-8b61-da7844ae7bf0" name="mpg-cars-implFlow8"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="f4870995-ef4a-42f9-bff8-d6a135e7faf8" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+
+</mule>

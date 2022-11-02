@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<http:listener-config name="cars-httpListenerConfig" doc:name="HTTP Listener config" doc:id="d5302465-d571-4488-b469-9a8199d59269" >
+		<http:listener-connection host="${http.host}" port="${http.port}" />
+	</http:listener-config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="6377c4ce-ccdd-44cd-ae4c-a64de62702ee" />
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="d0071e52-87f3-49c2-870e-5f2e0ddbb6e8" >
+		<db:my-sql-connection host="${db.host}" port="${db.port}" user="${db.user}" password="${db.password}" database="${db.database}" />
+	</db:config>
+	<configuration doc:name="Configuration" doc:id="36818790-13c4-45cc-9365-dd090421959a" defaultErrorHandler-ref="errorError_Handler" />
+	<configuration-properties doc:name="Configuration properties" doc:id="ae00ab8d-ffbd-4be2-a029-b2827515aba5" file="app.properties" />
+</mule>

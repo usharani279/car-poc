@@ -1,0 +1,107 @@
+#%RAML 1.0
+title: cars
+description: About cars details
+traits:
+  error_responce: !include trait.raml
+/fileRead:
+  is: [error_responce]
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include example/success/car.json
+/ID:
+    is: [error_responce]
+    get:
+      queryParameters:
+        ID:
+          type: number
+          required: true
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include example/success/car.json
+/newCar:
+  is: [error_responce]
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include example/success/car.json
+/oil:
+  is: [error_responce]
+  get:
+    queryParameters:
+        carName:
+          type: string
+          required: false
+        oil:
+          type: string
+          required: false    
+        carType:
+          type: string
+          required: false 
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include example/success/car.json
+/cheapestCar:
+  is: [error_responce]
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include example/success/car.json
+/tax:
+  is: [error_responce]
+  get:
+    queryParameters:
+      petrol:
+        type: string
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include example/success/car.json
+/carModel:
+  is: [error_responce]
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include example/success/car.json
+/AutomaticCarprice:
+  is: [error_responce]
+  get:
+    responses:
+     200:
+        body:
+         application/json:
+           example: !include example/success/car.json
+/ManualCarprice:
+  is: [error_responce]
+  get:
+    responses:
+     200:
+       body:
+        application/json:
+         example: !include example/success/car.json                      
+/mpg:
+  is: [error_responce]
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include example/success/car.json
+
+
+                                      
+

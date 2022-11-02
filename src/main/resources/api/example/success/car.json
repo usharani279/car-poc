@@ -1,0 +1,74 @@
+[
+  {
+    "ID": 1,
+    "carName": "audi",
+    "price": 100000,
+    "oil": "petrol",
+    "mileage": 70000,
+    "model": "X",
+    "year": 2000,
+    "tax": 200,
+    "carType": "auto",
+    "engine": "2ltr"
+  },
+  {
+    "ID": 2,
+    "carName": "audi",
+    "price": 90000,
+    "oil": "diesel",
+    "mileage": 75000,
+    "model": "Y",
+    "year": 2010,
+    "tax": 250,
+    "carType": "semi-auto",
+    "engine": "1.5ltr"
+  },
+  {
+    "ID": 3,
+    "carName": "audi",
+    "price": 94000,
+    "oil": "diesel",
+    "mileage": 87000,
+    "model": "Z",
+    "year": 2011,
+    "tax": 250,
+    "carType": "manual",
+    "engine": "2ltr"
+  },
+  {
+    "ID": 4,
+    "carName": "BMW",
+    "price": 100000,
+    "oil": "diesel",
+    "mileage": 87000,
+    "model": "Z",
+    "year": 2011,
+    "tax": 250,
+    "carType": "manual",
+    "engine": "2ltr"
+  },
+  {
+    "ID": 5,
+    "carName": "BMW",
+    "price": 79000,
+    "oil": "petrol",
+    "mileage": 65000,
+    "model": "X",
+    "year": 2009,
+    "tax": 220,
+    "carType": "auto",
+    "engine": "1,5ltr"
+  },
+  {
+    "ID": 6,
+    "carName": "BMW",
+    "price": 89000,
+    "oil": "diesel",
+    "mileage": 78000,
+    "model": "Y",
+    "year": 2015,
+    "tax": 190,
+    "carType": "semi-auto",
+    "engine": "2ltr"
+  }
+]
